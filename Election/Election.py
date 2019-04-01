@@ -71,7 +71,7 @@ def main(argv, len(argv)):
         for issue in range(issues):
             cp = random.uniform(0,1)
             cpref.append(cp)
-        v = Person(cpref, c)
+        v = Person(cpref, c, False)
     ##Generate voters and their preferences
     voters = []
     for v in range(population):
@@ -80,7 +80,7 @@ def main(argv, len(argv)):
         for issue in range(issues):
             vp = random.uniform(0,1)
             vpref.append(vp)
-        v = Person(vpref, v)
+        v = Person(vpref, v, True)
 
     ##Identify the Voting Rule
     vote_type = argv[4]
