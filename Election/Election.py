@@ -27,6 +27,7 @@ def pluralityVote(voters, candidates):
     ##Poll Results
     poll = [[]] * candidates
     ##"Randomize" the Random Number Generator (RNG)
+    random.seed(datetime.now())
     ##Starting Election
     for vindex, v in enumerate(voters):
         min_dist = float("inf")
