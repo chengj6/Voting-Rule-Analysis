@@ -1,4 +1,4 @@
-import Voter.py
+import Person.py
 import Preference.py
 import math
 import random
@@ -71,16 +71,16 @@ def main(argv, len(argv)):
         for issue in range(issues):
             cp = random.uniform(0,1)
             cpref.append(cp)
-        v = Voter(cpref)
+        v = Person(cpref, c)
     ##Generate voters and their preferences
     voters = []
-    for i in range(population):
+    for v in range(population):
         vpref = []
         ##Generate a list of preferences over the issues
         for issue in range(issues):
             vp = random.uniform(0,1)
             vpref.append(vp)
-        v = Voter(vpref)
+        v = Person(vpref, v)
 
     ##Identify the Voting Rule
     vote_type = argv[4]
