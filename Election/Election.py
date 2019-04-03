@@ -15,17 +15,69 @@ def distanceBetween(v1, v2):
         result += math.pow(dif, 2)
     return math.sqrt(result)
 
-def bordaVote(voters, candidates):
-    poll = [[]] * candidates
+def bordaVote(voters, candidates, num_candidates):
+    ##Poll contains the candidates' votes candidate id is the index
+    poll = [0] * num_candidates
+    rankings = [[]] * len(voters)
+    for vindex, v in enumerate(voters):
+        min_dist = float("inf")
+        min_index = -1
+        ##Find the closest candidate
+        ranking = []
+        for cindex, c in enumerate(candidates):
+            dist = distanceBetween(v, c)
+            for rindex, candidate in enumerate(ranking):
+                if dist <= distanceBetween(v, candidate):
+                    ranking.insert(rindex, c)
+            ranking.append(c)
+        rankings[vindex].append(ranking)
+    for ranking in rankings:
+        for i, candidate in enumerate(ranking):
+            poll[candidate.id]+=(len(ranking)-(i+1))
     return poll
 
-def stvVote(voters, candidates):
-    poll = [[]] * candidates
-    return poll
+def stvVote(voters, candidates, num_candidates, results):
+    ##results shows who voted for which candidate
+    ##Candidate id is the index
+    results = [[]] * num_candidates
+    ##"Randomize" the Random Number Generator (RNG)
+    random.seed(datetime.now())
+    for vindex, v in enumerate(voters):
+        min_dist = float("inf")
+        min_index = -1
+        ##Find the closest candidate
+        indecisive = [] ##For ties between distances
+        for cindex, c in enumerate(candidates):
+            dist = distanceBetween(v, c)
+            if dist <= min_dist:
+                indecisive.append(cindex)
+                min_index = cindex
+                min_dist = dist
+        ##Tie breaking if necessary
+        if len(indecisive) != 1:
+            min_index = random.randint(0, len(indecisive))
+        results[min_index].append(vindex)
+    if num_candidates == 2:
+        return results
+    ##Remove lowest voted candidate
+    min_votes = float("inf")
+    for index, votes in enumerate(poll):
+        if len(votes) < min_votes:
+            min_votes = index
+    new_candidates = list(candidates)
+    for candidate in new_candidates:
+        if candidate.id == min_votes:
+            new_candidates.remove(candidate)
+            break
+    ##Next election with one less candidate
+    #---NEED TO DO---#
+    ##Need to archive the past results
+    return stvVote(voters, new_candidates, num_candidates - 1, results)
 
-def pluralityVote(voters, candidates):
-    ##Poll Results
-    poll = [[]] * candidates
+def pluralityVote(voters, candidates, num_candidates):
+    ##Polls include who voted for which candidate
+    ##Candidate id is the index
+    poll = [[]] * num_candidates
     ##"Randomize" the Random Number Generator (RNG)
     random.seed(datetime.now())
     ##Starting Election
@@ -35,7 +87,7 @@ def pluralityVote(voters, candidates):
         ##Find the closest candidate
         indecisive = [] ##For ties between distances
         for cindex, c in enumerate(candidates):
-            dist = distanceBetween(v, c, issues)
+            dist = distanceBetween(v, c)
             if dist <= min_dist:
                 indecisive.append(cindex)
                 min_index = cindex
@@ -43,7 +95,7 @@ def pluralityVote(voters, candidates):
         ##Tie breaking if necessary
         if len(indecisive) != 1:
             min_index = random.randint(0, len(indecisive))
-        poll[min_index] = vindex
+        poll[min_index].append(vindex)
     return poll
 
 def main(argv, len(argv)):
@@ -87,15 +139,16 @@ def main(argv, len(argv)):
     vote_type.lower()
     v_t = vote_type[0]
     poll = None
+    results = [[]] * num_candidates
     ##Plurality
     if v_t == 'p':
-        poll = pluralityVote(voters, candidates)
+        poll = pluralityVote(voters, candidates, num_candidates)
     ##Borda
     elif v_t == 'b':
-        poll = bordaVote(voters, candidates)
+        poll = bordaVote(voters, candidates, num_candidates)
     ##Single Transferable Vote (STV)
     elif v_t == 's':
-        poll = stvVote(voters, candidates)
+        poll = stvVote(voters, candidates, num_candidates, results)
     ##Invalid or Not Implemented
     else:
         return "Rule Type Not Implemented or Unknown\n"
