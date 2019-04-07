@@ -78,7 +78,9 @@ def stvVote(voters, candidates, num_candidates, results):
 def pluralityVote(voters, candidates, num_candidates):
     ##Polls include who voted for which candidate
     ##Candidate id is the index
-    poll = [[]] * num_candidates
+    poll = []
+    for i in range(num_candidates):
+        poll.append([])
     ##Don't want randomness for expected results
     ##"Randomize" the Random Number Generator (RNG)
     ##random.seed(datetime.now())
@@ -91,13 +93,16 @@ def pluralityVote(voters, candidates, num_candidates):
         indecisive = [] ##For ties between distances
         for cindex, c in enumerate(candidates):
             dist = distanceBetween(v, c)
+            # print(min_index)
             if dist <= min_dist:
-                indecisive.append(cindex)
+                if dis == min_dist:
+                    indecisive.append(cindex)
                 min_index = cindex
                 min_dist = dist
         ##Tie breaking if necessary
-        if len(indecisive) != 1:
-            min_index = random.randint(0, len(indecisive))
+        if len(indecisive)-1 > 0:
+            min_index = indecisive[random.randint(0, len(indecisive)-1)]
+        # assert(min_index!=-1)
         poll[min_index].append(vindex)
     return poll
 
