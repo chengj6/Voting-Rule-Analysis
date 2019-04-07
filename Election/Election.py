@@ -2,6 +2,7 @@ from Person import Person
 import Preference
 import math
 import random
+import matplotlib.pyplot as plt
 import sys
 
 ##Euclidian distance between two issue-dimensional points
@@ -166,7 +167,20 @@ def main():
     else:
         return "Rule Type Not Implemented or Unknown\n"
 
-    return poll
+    plt.subplot(1, 1, 1)
+    x = []
+    y = []
+    ticks = []
+    for i in range(num_candidates):
+        x.append(i)
+        y.append(len(poll[i]))
+        ticks.append(candidates[i].id+1)
+    plt.bar(x, y, tick_label = ticks, width = .5, color = ['blue'])
+    plt.xlabel('Candidate')
+    plt.ylabel('Votes')
+    plt.title('Plurality Election')
+
+    plt.show()
     ##Analysis of poll data
     ##WORK IN PROGRESS
 
