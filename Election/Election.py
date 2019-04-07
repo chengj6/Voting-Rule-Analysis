@@ -134,7 +134,8 @@ def main():
         for issue in range(issues):
             cp = random.uniform(0,1)
             cpref.append(cp)
-        v = Person(cpref, c, False)
+        candidate = Person(cpref, c, False)
+        candidates.append(candidate)
     ##Generate voters and their preferences
     voters = []
     for v in range(population):
@@ -143,8 +144,8 @@ def main():
         for issue in range(issues):
             vp = random.uniform(0,1)
             vpref.append(vp)
-        v = Person(vpref, v, True)
-        voters.append(v)
+        voter = Person(vpref, v, True)
+        voters.append(voter)
     ##Identify the Voting Rule
     vote_type = sys.argv[4]
     vote_type.lower()
