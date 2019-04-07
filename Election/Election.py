@@ -19,8 +19,8 @@ def distanceBetween(v1, v2):
 def bordaVote(voters, candidates, num_candidates):
     ##Poll contains the candidates' votes candidate id is the index
     poll = [0] * num_candidates
-    rankings =  []
-    for i in range(num_candidates):
+    rankings = []
+    for i in range(len(voters)):
         rankings.append([])
     for vindex, v in enumerate(voters):
         min_dist = float("inf")
@@ -29,11 +29,19 @@ def bordaVote(voters, candidates, num_candidates):
         ranking = []
         for cindex, c in enumerate(candidates):
             dist = distanceBetween(v, c)
+            check = False
             for rindex, candidate in enumerate(ranking):
                 if dist <= distanceBetween(v, candidate):
+                    check = True
                     ranking.insert(rindex, c)
-            ranking.append(c)
-        rankings[vindex].append(ranking)
+                    break
+            if not check:
+                ranking.append(c)
+        rankings[vindex] = (ranking)
+        assert len(ranking) == 10
+
+    # print (rankings[0][0])
+    # exit()
     for ranking in rankings:
         for i, candidate in enumerate(ranking):
             poll[candidate.id]+=(len(ranking)-(i+1))
