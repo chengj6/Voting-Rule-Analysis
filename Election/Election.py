@@ -101,18 +101,22 @@ def pluralityVote(voters, candidates, num_candidates):
     return poll
 
 def main():
-    if(len(sys.argc) != 5):
+    ##print(sys.argv)
+    if(len(sys.argv) != 5):
         return "Invalid Arguments\n <exe> <issues> <population> <candidates> <voting rule>\n"
     ##Command line argument 1 is the number of issues
     issues = sys.argv[1]
+    issues = int(issues)
     if issues == 0:
         return "No Issues = No Election\n"
     ##Command line argument 2 is the population
     population = sys.argv[2]
+    population = int(population)
     if population == 0:
         return "No Population = No Election\n"
     ##Command line argument 3 is the number of candidates
     num_candidates = sys.argv[3]
+    num_candidates = int(num_candidates)
     if num_candidates == 0:
         return "No Candidates = No Election\n"
     ##Seed Random Number Generator for reusability of results
@@ -135,7 +139,7 @@ def main():
             vp = random.uniform(0,1)
             vpref.append(vp)
         v = Person(vpref, v, True)
-
+        voters.append(v)
     ##Identify the Voting Rule
     vote_type = sys.argv[4]
     vote_type.lower()
@@ -155,5 +159,8 @@ def main():
     else:
         return "Rule Type Not Implemented or Unknown\n"
 
+    return poll
     ##Analysis of poll data
     ##WORK IN PROGRESS
+
+print(main())
