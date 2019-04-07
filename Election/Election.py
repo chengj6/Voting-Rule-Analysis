@@ -40,8 +40,9 @@ def stvVote(voters, candidates, num_candidates, results):
     ##results shows who voted for which candidate
     ##Candidate id is the index
     results = [[]] * num_candidates
+    ##Don't want randomness for expected results
     ##"Randomize" the Random Number Generator (RNG)
-    random.seed(datetime.now())
+    ##random.seed(datetime.now())
     for vindex, v in enumerate(voters):
         min_dist = float("inf")
         min_index = -1
@@ -78,8 +79,9 @@ def pluralityVote(voters, candidates, num_candidates):
     ##Polls include who voted for which candidate
     ##Candidate id is the index
     poll = [[]] * num_candidates
+    ##Don't want randomness for expected results
     ##"Randomize" the Random Number Generator (RNG)
-    random.seed(datetime.now())
+    ##random.seed(datetime.now())
     ##Starting Election
     for vindex, v in enumerate(voters):
         min_dist = float("inf")
