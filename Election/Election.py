@@ -39,9 +39,6 @@ def bordaVote(voters, candidates, num_candidates):
                 ranking.append(c)
         rankings[vindex] = (ranking)
         assert len(ranking) == 10
-
-    # print (rankings[0][0])
-    # exit()
     for ranking in rankings:
         for i, candidate in enumerate(ranking):
             poll[candidate.id]+=(len(ranking)-(i+1))
@@ -165,31 +162,54 @@ def main():
     poll = None
     results = [[]] * num_candidates
     ##Plurality
+    Plurality = False
+    Borda = False
+    STV = False
     if v_t == 'p':
         poll = pluralityVote(voters, candidates, num_candidates)
+        Plurality = True
     ##Borda
     elif v_t == 'b':
         poll = bordaVote(voters, candidates, num_candidates)
+        Borda = True
     ##Single Transferable Vote (STV)
     elif v_t == 's':
         poll = stvVote(voters, candidates, num_candidates, results)
+        STV = True
     ##Invalid or Not Implemented
     else:
         return "Rule Type Not Implemented or Unknown\n"
 
-    plt.subplot(1, 1, 1)
     x = []
     y = []
     ticks = []
-    for i in range(num_candidates):
-        x.append(i)
-        y.append(len(poll[i]))
-        ticks.append(candidates[i].id+1)
-    plt.bar(x, y, tick_label = ticks, width = .5, color = ['blue'])
-    plt.xlabel('Candidate')
-    plt.ylabel('Votes')
-    plt.title('Plurality Election')
-
+    if Plurality:
+        for i in range(num_candidates):
+            x.append(i)
+            y.append(len(poll[i]))
+            ticks.append(candidates[i].id+1)
+        plt.bar(x, y, tick_label = ticks, width = .5, color = ['blue'])
+        plt.xlabel('Candidate')
+        plt.ylabel('Votes')
+        plt.title('Plurality Election Outcome')
+    elif Borda:
+        for i in range(num_candidates):
+            x.append(i)
+            y.append(poll[i])
+            ticks.append(candidates[i].id+1)
+        plt.bar(x, y, tick_label = ticks, width = .5, color = ['blue'])
+        plt.xlabel('Candidate')
+        plt.ylabel('Score')
+        plt.title('Borda Election Outcome')
+    elif STV:
+        for i in range(num_candidates):
+            x.append(i)
+            y.append(len(poll[i]))
+            ticks.append(candidates[i].id+1)
+        plt.bar(x, y, tick_label = ticks, width = .5, color = ['blue'])
+        plt.xlabel('Candidate')
+        plt.ylabel('Votes')
+        plt.title('STV Election Outcome')
     plt.show()
     ##Analysis of poll data
     ##WORK IN PROGRESS
