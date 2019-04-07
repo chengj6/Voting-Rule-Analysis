@@ -100,19 +100,19 @@ def pluralityVote(voters, candidates, num_candidates):
         poll[min_index].append(vindex)
     return poll
 
-def main(argv):
-    if(len(argv) != 5):
+def main():
+    if(len(sys.argv) != 5):
         return "Invalid Arguments\n <exe> <issues> <population> <candidates> <voting rule>\n"
     ##Command line argument 1 is the number of issues
-    issues = argv[1]
+    issues = sys.argv[1]
     if issues == 0:
         return "No Issues = No Election\n"
     ##Command line argument 2 is the population
-    population = argv[2]
+    population = sys.argv[2]
     if population == 0:
         return "No Population = No Election\n"
     ##Command line argument 3 is the number of candidates
-    num_candidates = argv[3]
+    num_candidates = sys.argv[3]
     if num_candidates == 0:
         return "No Candidates = No Election\n"
     ##Seed Random Number Generator for reusability of results
@@ -137,7 +137,7 @@ def main(argv):
         v = Person(vpref, v, True)
 
     ##Identify the Voting Rule
-    vote_type = argv[4]
+    vote_type = sys.argv[4]
     vote_type.lower()
     v_t = vote_type[0]
     poll = None
