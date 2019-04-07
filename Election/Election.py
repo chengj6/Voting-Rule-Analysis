@@ -1,5 +1,5 @@
-import Person.py
-import Preference.py
+import Person
+import Preference
 import math
 import random
 import sys
@@ -100,7 +100,7 @@ def pluralityVote(voters, candidates, num_candidates):
         poll[min_index].append(vindex)
     return poll
 
-def main(argv, len(argv)):
+def main(argv):
     if(len(argv) != 5):
         return "Invalid Arguments\n <exe> <issues> <population> <candidates> <voting rule>\n"
     ##Command line argument 1 is the number of issues
