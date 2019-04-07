@@ -85,6 +85,7 @@ def pluralityVote(voters, candidates, num_candidates):
     ##"Randomize" the Random Number Generator (RNG)
     ##random.seed(datetime.now())
     ##Starting Election
+    x = 0
     for vindex, v in enumerate(voters):
         min_dist = float("inf")
         min_index = -1
@@ -94,7 +95,7 @@ def pluralityVote(voters, candidates, num_candidates):
             dist = distanceBetween(v, c)
             # print(min_index)
             if dist <= min_dist:
-                if dis == min_dist:
+                if dist == min_dist:
                     indecisive.append(cindex)
                 min_index = cindex
                 min_dist = dist
