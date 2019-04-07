@@ -1,4 +1,4 @@
-import Person
+from Person import Person
 import Preference
 import math
 import random
@@ -62,7 +62,7 @@ def stvVote(voters, candidates, num_candidates, results):
         return results
     ##Remove lowest voted candidate
     min_votes = float("inf")
-    for index, votes in enumerate(poll):
+    for index, votes in enumerate(results):
         if len(votes) < min_votes:
             min_votes = index
     new_candidates = list(candidates)
