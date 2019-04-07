@@ -95,7 +95,7 @@ def pluralityVote(voters, candidates, num_candidates):
             dist = distanceBetween(v, c)
             # print(min_index)
             if dist <= min_dist:
-                if dis == min_dist:
+                if dist == min_dist:
                     indecisive.append(cindex)
                 min_index = cindex
                 min_dist = dist
