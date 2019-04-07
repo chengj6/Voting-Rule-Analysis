@@ -160,11 +160,11 @@ def main():
     vote_type.lower()
     v_t = vote_type[0]
     poll = None
-    results = [[]] * num_candidates
-    ##Plurality
     Plurality = False
     Borda = False
     STV = False
+    results = [[]] * num_candidates
+    ##Plurality
     if v_t == 'p':
         poll = pluralityVote(voters, candidates, num_candidates)
         Plurality = True
@@ -172,7 +172,7 @@ def main():
     elif v_t == 'b':
         poll = bordaVote(voters, candidates, num_candidates)
         Borda = True
-    ##Single Transferable Vote (STV)
+    ##Single Transferable Vote (STV) NOT IMPLEMENTED
     elif v_t == 's':
         poll = stvVote(voters, candidates, num_candidates, results)
         STV = True
@@ -210,7 +210,23 @@ def main():
         plt.xlabel('Candidate')
         plt.ylabel('Votes')
         plt.title('STV Election Outcome')
+
+    winner_score = max(y)
+    winner_index = y.index(winner_score)
+    winner = candidates[winner_index]
+    print("Winner is candidate %d!\n" %(winner.id+1))
     plt.show()
+
+    utilities = []
+    ##Utility of Population
+    beta = 1
+    omega = 1
+    total_utility_after = 0
+    for vindex, v in enumerate(voters):
+        utility = beta * math.exp(-1/2*omega*math.pow(distanceBetween(v, winner), 2))
+        total_utility_after += utility
+        utilities[vindex] = utility
+    
     ##Analysis of poll data
     ##WORK IN PROGRESS
 
