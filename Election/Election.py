@@ -47,7 +47,9 @@ def bordaVote(voters, candidates, num_candidates):
 def stvVote(voters, candidates, num_candidates, results):
     ##results shows who voted for which candidate
     ##Candidate id is the index
-    results = [[]] * num_candidates
+    results = []
+    for i in range(num_candidates):
+        results.append([])
     ##Don't want randomness for expected results
     ##"Randomize" the Random Number Generator (RNG)
     ##random.seed(datetime.now())
@@ -58,26 +60,35 @@ def stvVote(voters, candidates, num_candidates, results):
         indecisive = [] ##For ties between distances
         for cindex, c in enumerate(candidates):
             dist = distanceBetween(v, c)
+            # print(min_index)
             if dist <= min_dist:
-                indecisive.append(cindex)
+                if dist == min_dist:
+                    indecisive.append(cindex)
                 min_index = cindex
                 min_dist = dist
         ##Tie breaking if necessary
-        if len(indecisive) != 1:
-            min_index = random.randint(0, len(indecisive))
+        if len(indecisive) > 0:
+            min_index = indecisive[random.randint(0, len(indecisive)-1)]
+        # print(min_index, len(results))
+        # if len(results) <10:
+        #     print(num_candidates)
+        #     print(results)
+        # assert(len(results) == 10)
+        # assert(min_index!=-1)
         results[min_index].append(vindex)
     if num_candidates == 2:
-        return results
+        return results, candidates
     ##Remove lowest voted candidate
     min_votes = float("inf")
+    min_index = -1
     for index, votes in enumerate(results):
         if len(votes) < min_votes:
-            min_votes = index
-    new_candidates = list(candidates)
-    for candidate in new_candidates:
-        if candidate.id == min_votes:
-            new_candidates.remove(candidate)
-            break
+            min_votes = len(votes)
+            min_index = index
+    new_candidates = candidates.copy()
+    assert(min_index != -1)
+    rem_candidate = new_candidates[min_index]
+    new_candidates.remove(rem_candidate)
     ##Next election with one less candidate
     #---NEED TO DO---#
     ##Need to archive the past results
@@ -108,7 +119,7 @@ def pluralityVote(voters, candidates, num_candidates):
                 min_index = cindex
                 min_dist = dist
         ##Tie breaking if necessary
-        if len(indecisive)-1 > 0:
+        if len(indecisive) > 0:
             min_index = indecisive[random.randint(0, len(indecisive)-1)]
         # assert(min_index!=-1)
         poll[min_index].append(vindex)
@@ -117,24 +128,29 @@ def pluralityVote(voters, candidates, num_candidates):
 def main():
     ##print(sys.argv)
     if(len(sys.argv) != 5):
-        return "Invalid Arguments\n <exe> <issues> <population> <candidates> <voting rule>\n"
+        return print("Invalid Arguments\npy <exe> <issues> <population> <candidates> <voting rule>\n")
+
     ##Command line argument 1 is the number of issues
     issues = sys.argv[1]
     issues = int(issues)
     if issues == 0:
-        return "No Issues = No Election\n"
+        return print("No Issues = No Election\n")
+
     ##Command line argument 2 is the population
     population = sys.argv[2]
     population = int(population)
     if population == 0:
-        return "No Population = No Election\n"
+        return print("No Population = No Election\n")
+
     ##Command line argument 3 is the number of candidates
     num_candidates = sys.argv[3]
     num_candidates = int(num_candidates)
     if num_candidates == 0:
-        return "No Candidates = No Election\n"
+        return print("No Candidates = No Election\n")
+
     ##Seed Random Number Generator for reusability of results
     random.seed(9001)
+
     ##Generate Candidates and their preferences
     candidates = []
     for c in range(num_candidates):
@@ -145,6 +161,7 @@ def main():
             cpref.append(cp)
         candidate = Person(cpref, c, False)
         candidates.append(candidate)
+
     ##Generate voters and their preferences
     voters = []
     for v in range(population):
@@ -155,6 +172,22 @@ def main():
             vpref.append(vp)
         voter = Person(vpref, v, True)
         voters.append(voter)
+
+    ## Find Utility of Population Before Election
+    beta = 1.0
+    omega = 1.0
+    total_utilities_before = []
+    for c in candidates:
+        total_utility_before = 0.0
+        for v in voters:
+            utility = beta * math.exp(-1.0/2.0*omega*math.pow(distanceBetween(v, c), 2))
+            total_utility_before += utility
+        total_utilities_before.append(total_utility_before)
+
+    optimal_utility = max(total_utilities_before)
+    optimal_candidate_index = total_utilities_before.index(optimal_utility)
+    optimal_candidate = candidates[optimal_candidate_index]
+
     ##Identify the Voting Rule
     vote_type = sys.argv[4]
     vote_type.lower()
@@ -164,6 +197,7 @@ def main():
     Borda = False
     STV = False
     results = [[]] * num_candidates
+
     ##Plurality
     if v_t == 'p':
         poll = pluralityVote(voters, candidates, num_candidates)
@@ -174,11 +208,11 @@ def main():
         Borda = True
     ##Single Transferable Vote (STV) NOT IMPLEMENTED
     elif v_t == 's':
-        poll = stvVote(voters, candidates, num_candidates, results)
+        poll, end_candidates = stvVote(voters, candidates, num_candidates, results)
         STV = True
     ##Invalid or Not Implemented
     else:
-        return "Rule Type Not Implemented or Unknown\n"
+        return print("Rule Type Not Implemented or Unknown\n")
 
     x = []
     y = []
@@ -202,32 +236,64 @@ def main():
         plt.ylabel('Score')
         plt.title('Borda Election Outcome')
     elif STV:
-        for i in range(num_candidates):
+        for i in range(len(poll)):
             x.append(i)
             y.append(len(poll[i]))
-            ticks.append(candidates[i].id+1)
+            ticks.append(end_candidates[i].id+1)
         plt.bar(x, y, tick_label = ticks, width = .5, color = ['blue'])
         plt.xlabel('Candidate')
         plt.ylabel('Votes')
         plt.title('STV Election Outcome')
 
+    ## Find Winner
     winner_score = max(y)
     winner_index = y.index(winner_score)
     winner = candidates[winner_index]
     print("Winner is candidate %d!\n" %(winner.id+1))
+    print("The Optimal candidate is candidate %d\n" %(optimal_candidate.id+1))
     plt.show()
 
     utilities = []
-    ##Utility of Population
-    beta = 1
-    omega = 1
-    total_utility_after = 0
+    ##Utility of Population After Election
+    beta = 1.0
+    omega = 1.0
+    total_utility_after = 0.0
     for vindex, v in enumerate(voters):
-        utility = beta * math.exp(-1/2*omega*math.pow(distanceBetween(v, winner), 2))
+        utility = beta * math.exp(-1.0/2.0*omega*math.pow(distanceBetween(v, winner), 2))
         total_utility_after += utility
-        utilities[vindex] = utility
-    
-    ##Analysis of poll data
-    ##WORK IN PROGRESS
+        v.addUtility(utility)
+        utilities.append(utility)
 
-print(main())
+    print("Total Utility After Election: %f" %(total_utility_after))
+    print("Optimal Utility: %f" %(optimal_utility))
+    # print("%s" %(utilities))
+
+    ## Analysis of poll data
+    ## Random Population Removal Model and Graph
+    copy_voters = voters.copy()
+    ten_percent = math.ceil(population*0.1)
+    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    y = [total_utility_after]
+    while len(copy_voters) != 0:
+        for i in range(ten_percent):
+            if len(copy_voters) == 0:
+                break
+            rem_index = random.randint(0, len(copy_voters)-1)
+            voter_to_remove = copy_voters[rem_index]
+            copy_voters.remove(voter_to_remove)
+            utilities[voter_to_remove.id] = 0
+        y.append(sum(utilities))
+    plt.plot(x,y,'r-')
+    plt.xlabel('Percent of Voters Removed')
+    plt.ylabel('Total Utility')
+    if Plurality:
+        plt.title('Random Population Removal vs Total Utility (Plurality)')
+    if Borda:
+        plt.title('Random Population Removal vs Total Utility (Borda)')
+    if STV:
+        plt.title('Random Population Removal vs Total Utility (STV)')
+    plt.show()
+
+    ## WORK IN PROGRESS
+
+main()

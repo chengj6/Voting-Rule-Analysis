@@ -6,3 +6,7 @@ class Person:
         self.voter = voter
         self.id = id
         self.pref = pref
+        self.utility = None
+
+    def addUtility(self, utility):
+        self.utility = utility
