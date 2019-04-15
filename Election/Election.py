@@ -180,7 +180,7 @@ def main():
     for c in candidates:
         total_utility_before = 0.0
         for v in voters:
-            utility = beta * math.exp(-1.0/2.0*omega*math.pow(distanceBetween(v, c), 2))
+            utility = beta * math.exp(-1.0/2.0*omega*math.pow(1.0/distanceBetween(v, c), 2))
             total_utility_before += utility
         total_utilities_before.append(total_utility_before)
 
@@ -259,7 +259,7 @@ def main():
     omega = 1.0
     total_utility_after = 0.0
     for vindex, v in enumerate(voters):
-        utility = beta * math.exp(-1.0/2.0*omega*math.pow(distanceBetween(v, winner), 2))
+        utility = beta * math.exp(-1.0/2.0*omega*math.pow(1.0/distanceBetween(v, winner), 2))
         total_utility_after += utility
         v.addUtility(utility)
         utilities.append(utility)
@@ -293,6 +293,7 @@ def main():
     if STV:
         plt.title('Random Population Removal vs Total Utility (STV)')
     plt.show()
+
 
     ## WORK IN PROGRESS
 
