@@ -5,6 +5,9 @@ import random
 import matplotlib.pyplot as plt
 import sys
 
+def utilcompare(p):
+    return p.utility
+
 ##Euclidian distance between two issue-dimensional points
 def distanceBetween(v1, v2):
     p1 = v1.pref
@@ -124,6 +127,59 @@ def pluralityVote(voters, candidates, num_candidates):
         # assert(min_index!=-1)
         poll[min_index].append(vindex)
     return poll
+
+def removalGraph(voters, utilities, ten_percent, total_utility_after, high, Plurality, Borda, STV, median):
+    copy_voters = voters.copy()
+    copy_utilities = utilities.copy()
+    x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    y = [total_utility_after]
+    copy_voters.sort(reverse = high, key = utilcompare)
+    while len(copy_voters) != 0:
+        ## ten_percent = 2
+        ## len(copy_voters) = 20
+        ## 0 1 2 3 4 5 6 7 8 /9 10/ 11 12 13 14 15 16 17 18 19
+        for i in range(ten_percent):
+            median_start_index = int(len(copy_voters)/2 - ten_percent/2)
+            if len(copy_voters) == 0:
+                break
+            if ten_percent>=len(copy_voters):
+                copy_utilities = []
+                copy_voters = []
+                break;
+            rem_index = i
+            if median:
+                # print(median_start_index)
+                rem_index = median_start_index + i
+                # print(i, rem_index, len(copy_voters))
+            voter_to_remove = copy_voters[rem_index]
+            copy_voters.remove(voter_to_remove)
+            copy_utilities[voter_to_remove.id] = 0
+        y.append(sum(copy_utilities))
+    plt.plot(x,y,'r-')
+    plt.xlabel('Percent of Voters Removed')
+    plt.ylabel('Total Utility')
+    if high:
+        if Plurality:
+            plt.title('Highest Utility Targeted Population Removal vs Total Utility (Plurality)')
+        if Borda:
+            plt.title('Highest Utility Targeted Population Removal vs Total Utility (Borda)')
+        if STV:
+            plt.title('Highest Utility Targeted Population Removal vs Total Utility (STV)')
+    elif median:
+        if Plurality:
+            plt.title('Median Utility Targeted Population Removal vs Total Utility (Plurality)')
+        if Borda:
+            plt.title('Median Utility Targeted Population Removal vs Total Utility (Borda)')
+        if STV:
+            plt.title('Median Utility Targeted Population Removal vs Total Utility (STV)')
+    else:
+        if Plurality:
+            plt.title('Lowest Utility Targeted Population Removal vs Total Utility (Plurality)')
+        if Borda:
+            plt.title('Lowest Utility Targeted Population Removal vs Total Utility (Borda)')
+        if STV:
+            plt.title('Lowest Utility Targeted Population Removal vs Total Utility (STV)')
+    plt.show()
 
 def main():
     ##print(sys.argv)
@@ -249,6 +305,8 @@ def main():
     winner_score = max(y)
     winner_index = y.index(winner_score)
     winner = candidates[winner_index]
+    if STV:
+         winner = end_candidates[winner_index]
     print("Winner is candidate %d!\n" %(winner.id+1))
     print("The Optimal candidate is candidate %d\n" %(optimal_candidate.id+1))
     plt.show()
@@ -271,6 +329,7 @@ def main():
     ## Analysis of poll data
     ## Random Population Removal Model and Graph
     copy_voters = voters.copy()
+    copy_utilities = utilities.copy()
     ten_percent = math.ceil(population*0.1)
     x = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     y = [total_utility_after]
@@ -281,8 +340,8 @@ def main():
             rem_index = random.randint(0, len(copy_voters)-1)
             voter_to_remove = copy_voters[rem_index]
             copy_voters.remove(voter_to_remove)
-            utilities[voter_to_remove.id] = 0
-        y.append(sum(utilities))
+            copy_utilities[voter_to_remove.id] = 0
+        y.append(sum(copy_utilities))
     plt.plot(x,y,'r-')
     plt.xlabel('Percent of Voters Removed')
     plt.ylabel('Total Utility')
@@ -294,7 +353,13 @@ def main():
         plt.title('Random Population Removal vs Total Utility (STV)')
     plt.show()
 
-
+    ## Targeted removal (Lowest utility)
+    removalGraph(voters, utilities, ten_percent, total_utility_after, False, Plurality, Borda, STV, False)
+    ## Targeted removal (Highest utility)
+    removalGraph(voters, utilities, ten_percent, total_utility_after, True, Plurality, Borda, STV, False)
+    ## Targeted removal (Median Utility)
+    removalGraph(voters, utilities, ten_percent, total_utility_after, False, Plurality, Borda, STV, True)
     ## WORK IN PROGRESS
+
 
 main()
