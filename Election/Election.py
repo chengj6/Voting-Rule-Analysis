@@ -322,6 +322,8 @@ def main():
         v.addUtility(utility)
         utilities.append(utility)
 
+    ## WORK IN PROGRESS
+    ## Distortion Analysis
     print("Total Utility After Election: %f" %(total_utility_after))
     print("Optimal Utility: %f" %(optimal_utility))
     # print("%s" %(utilities))
@@ -359,7 +361,5 @@ def main():
     removalGraph(voters, utilities, ten_percent, total_utility_after, True, Plurality, Borda, STV, False)
     ## Targeted removal (Median Utility)
     removalGraph(voters, utilities, ten_percent, total_utility_after, False, Plurality, Borda, STV, True)
-    ## WORK IN PROGRESS
-
 
 main()
