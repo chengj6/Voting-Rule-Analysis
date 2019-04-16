@@ -339,6 +339,7 @@ def main():
     ## Distortion Analysis
     print("Total Utility After Election: %f" %(total_utility_after))
     print("Optimal Utility: %f" %(optimal_utility))
+    print("Distortion: %f" %(optimal_utility - total_utility_after))
     # print("%s" %(utilities))
 
     ## Analysis of poll data
