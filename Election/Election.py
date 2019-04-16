@@ -47,7 +47,7 @@ def bordaVote(voters, candidates, num_candidates):
             poll[candidate.id]+=(len(ranking)-(i+1))
     return poll
 
-def stvVote(voters, candidates, num_candidates, results):
+def stvVote(voters, candidates, num_candidates, results, round):
     ##results shows who voted for which candidate
     ##Candidate id is the index
     results = []
@@ -81,6 +81,19 @@ def stvVote(voters, candidates, num_candidates, results):
         results[min_index].append(vindex)
     if num_candidates == 2:
         return results, candidates
+    ##Show each round's results
+    x = []
+    y = []
+    ticks = []
+    for i in range(len(results)):
+        x.append(i)
+        y.append(len(results[i]))
+        ticks.append(candidates[i].id+1)
+    plt.bar(x, y, tick_label = ticks, width = .5, color = ['blue'])
+    plt.xlabel('Candidate')
+    plt.ylabel('Votes')
+    plt.title("STV Election Round %i" %(round))
+    plt.show()
     ##Remove lowest voted candidate
     min_votes = float("inf")
     min_index = -1
@@ -93,9 +106,9 @@ def stvVote(voters, candidates, num_candidates, results):
     rem_candidate = new_candidates[min_index]
     new_candidates.remove(rem_candidate)
     ##Next election with one less candidate
-    #---NEED TO DO---#
-    ##Need to archive the past results
-    return stvVote(voters, new_candidates, num_candidates - 1, results)
+    ##Need to archive the past results <-- Future work?
+    round += 1
+    return stvVote(voters, new_candidates, num_candidates - 1, results, round)
 
 def pluralityVote(voters, candidates, num_candidates):
     ##Polls include who voted for which candidate
@@ -264,7 +277,7 @@ def main():
         Borda = True
     ##Single Transferable Vote (STV) NOT IMPLEMENTED
     elif v_t == 's':
-        poll, end_candidates = stvVote(voters, candidates, num_candidates, results)
+        poll, end_candidates = stvVote(voters, candidates, num_candidates, results, 1)
         STV = True
     ##Invalid or Not Implemented
     else:
